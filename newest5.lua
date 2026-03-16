@@ -555,7 +555,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end
             local groundY = getGroundHeight(r.Position)
             local targetY = groundY + Config.FloatHeight
-            if r.Position.Y < targetY - 0.5 then
+            local isAirborne = (r.Position.Y - groundY) > 6
+            if not isAirborne and r.Position.Y < targetY - 0.5 then
                 local prevY = r.Position.Y
                 local stuckFrames = 0
                 while not aborted() do
@@ -588,7 +589,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 if r.Position.Y - gY <= 3 then break end
                 if tick() - descentStart > 2 then break end
                 r.AssemblyLinearVelocity = Vector3.new(
-                    r.AssemblyLinearVelocity.X, -200, r.AssemblyLinearVelocity.Z)
+                    r.AssemblyLinearVelocity.X, -300, r.AssemblyLinearVelocity.Z)
                 task.wait(0.03)
             end
             if aborted() then return end
