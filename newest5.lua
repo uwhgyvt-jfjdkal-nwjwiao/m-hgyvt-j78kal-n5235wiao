@@ -125,6 +125,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     local _sideRowRefs = {}
     local TitlePills = { setL = nil, setR = nil }
     local PromptCache = {}
+    local IsRebinding = false
     local TP_SIDES = {
         R = { Step1 = Vector3.new(-473.42, -7.30, 22.15),  Step2 = Vector3.new(-482.89, -5.09, 26.45)  },
         L = { Step1 = Vector3.new(-470.56, -7.30, 100.08), Step2 = Vector3.new(-482.86, -5.09, 95.34) },
@@ -1231,7 +1232,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         Input.FocusLost:Connect(function()
             tween(Input, 0.12, { BackgroundColor3 = T.bg3 })
             local n = tonumber(Input.Text)
-            if n then Config[configKey] = n; SaveConfig() end
+            if n and n > 0 then Config[configKey] = n; SaveConfig() end
             Input.Text = tostring(Config[configKey])
         end)
     end
@@ -1261,11 +1262,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         BindBtn.MouseButton1Click:Connect(function()
             BindBtn.Text = "..."; BindBtn.TextColor3 = T.textLo
             local conn
+            IsRebinding = true
             conn = UIS.InputBegan:Connect(function(i, p)
                 if not p and i.UserInputType == Enum.UserInputType.Keyboard then
                     Config[configKey] = i.KeyCode
                     BindBtn.Text       = i.KeyCode.Name
                     BindBtn.TextColor3 = T.ice
+                    IsRebinding = false
                     SaveConfig(); conn:Disconnect()
                 end
             end)
@@ -1297,11 +1300,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         BindBtn.MouseButton1Click:Connect(function()
             BindBtn.Text = "..."; BindBtn.TextColor3 = T.textLo
             local conn
+            IsRebinding = true
             conn = UIS.InputBegan:Connect(function(i, p)
                 if not p and i.UserInputType == Enum.UserInputType.Keyboard then
                     Config[configKey] = i.KeyCode
                     BindBtn.Text       = i.KeyCode.Name
                     BindBtn.TextColor3 = T.ice
+                    IsRebinding = false
                     SaveConfig(); conn:Disconnect()
                 end
             end)
@@ -1334,7 +1339,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         Input.FocusLost:Connect(function()
             tween(Input, 0.12, { BackgroundColor3 = T.bg3 })
             local n = tonumber(Input.Text)
-            if n then Config[configKey] = n; SaveConfig() end
+            if n and n > 0 then Config[configKey] = n; SaveConfig() end
             Input.Text = tostring(Config[configKey])
         end)
     end
@@ -1518,7 +1523,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         Config.Float2Speed    = 45
         Config.AutoBatSpeed   = 58
         if Config.FastSpeedState     then FastSpeedSetState(true)                              end
-        if Config.AutoBatState       then AutoBatEnabled = true;       autoBatSetState(true)   end
+        Config.AutoBatState = false
+        AutoBatEnabled = false
         if Config.GrabState          then GrabActive = true;           grabSetState(true)      end
         if Config.AntiRagdollEnabled then ragdollSetState(true);       startAntiRagdoll()      end
         if Config.RagdollAutoTP      then ragdollTPSetState(true)                              end
@@ -1563,6 +1569,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     end
     UIS.InputBegan:Connect(function(i, p)
         if p then return end
+        if IsRebinding then return end
         if i.KeyCode == Enum.KeyCode.Space and Config.InfJumpEnabled then
             task.spawn(function()
                 while UIS:IsKeyDown(Enum.KeyCode.Space) and Config.InfJumpEnabled do
