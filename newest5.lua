@@ -607,7 +607,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 local gY = getGroundHeight(r.Position)
                 if r.Position.Y - gY <= 3 then break end
                 if tick() - descentStart > 2 then break end
-                local dropSpd = isAirborne and -800 or -300
+                local dropSpd = isAirborne and -200 or -120
                 r.AssemblyLinearVelocity = Vector3.new(
                     r.AssemblyLinearVelocity.X, dropSpd, r.AssemblyLinearVelocity.Z)
                 task.wait(0.03)
