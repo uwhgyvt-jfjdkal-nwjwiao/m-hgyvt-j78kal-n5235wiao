@@ -23,7 +23,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         BatDist             = 0,
         AutoBatKey          = Enum.KeyCode.V,
         AutoBatSpeed        = 58,
-        GrabSpeed           = 0.1,
+        GrabSpeed           = 0.05,
         GrabRange           = 30,
         ESPEnabled          = false,
         InfJumpEnabled      = false,
@@ -51,7 +51,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         AutoPlayState       = false,
         AutoPlayKey         = Enum.KeyCode.H,
         AutoPlaySide        = "L",
-        Step2Delay          = 0.05,
+        Step2Delay          = 0.06,
     }
     local KEYBIND_DEFAULTS = {
         FastSpeedKey = Enum.KeyCode.T,
@@ -83,7 +83,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end
         end
         Config.BatDist        = 0
-        Config.Step2Delay     = 0.05
+        Config.Step2Delay     = 0.06
         Config.FloatHeight    = 18
         Config.FloatSpeed     = 85
         Config.Float2Speed    = 45
@@ -132,16 +132,16 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     }
     local AutoTPRunning = false
     local AutoPlayStepsL = {
-        Vector3.new(-475.60, -7.20, 93.74),
+        Vector3.new(-475.80, -7.20, 94.04),
         Vector3.new(-482.86, -5.09, 95.34),
-        Vector3.new(-476.66, -6.69, 92.92),
+        Vector3.new(-476.36, -6.69, 93.02),
         Vector3.new(-476.44, -6.75, 27.55),
         Vector3.new(-485.52, -5.05, 27.29),
     }
     local AutoPlayStepsR = {
-        Vector3.new(-476.89, -6.99, 26.26),
-        Vector3.new(-482.89, -5.09, 26.45),
-        Vector3.new(-476.48, -6.76, 28.86),
+        Vector3.new(-476.19, -6.99, 26.26),
+        Vector3.new(-483.09, -5.09, 26.45),
+        Vector3.new(-476.18, -6.76, 29.46),
         Vector3.new(-476.68, -6.59, 94.13),
         Vector3.new(-484.26, -5.35, 94.00),
     }
@@ -440,17 +440,17 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         end
     end)
     local StealBarOuter = Instance.new("Frame", ScreenGui)
-    StealBarOuter.Size                   = UDim2.new(0, 320, 0, 76)
-    StealBarOuter.Position               = UDim2.new(0.5, -160, 1, -168)
+    StealBarOuter.Size                   = UDim2.new(0, 300, 0, 68)
+    StealBarOuter.Position               = UDim2.new(0.5, -150, 1, -156)
     StealBarOuter.BackgroundColor3       = Color3.fromRGB(8, 12, 20)
     StealBarOuter.BackgroundTransparency = 0
     StealBarOuter.BorderSizePixel        = 0
     StealBarOuter.ZIndex                 = 20
     StealBarOuter.Visible                = true
-    corner(StealBarOuter, 10)
+    corner(StealBarOuter, 14)
     local PillTrack = Instance.new("Frame", StealBarOuter)
-    PillTrack.Size             = UDim2.new(1, -20, 0, 10)
-    PillTrack.Position         = UDim2.new(0, 10, 0, 10)
+    PillTrack.Size             = UDim2.new(1, -24, 0, 18)
+    PillTrack.Position         = UDim2.new(0, 12, 0, 10)
     PillTrack.BackgroundColor3 = Color3.fromRGB(20, 36, 54)
     PillTrack.BorderSizePixel  = 0
     PillTrack.ZIndex           = 21
@@ -461,13 +461,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     PillFill.BorderSizePixel  = 0
     PillFill.ZIndex           = 22
     corner(PillFill, 99)
-    local BarPctLbl = lbl(StealBarOuter, "0", 12, T.textMid, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
-    BarPctLbl.Size     = UDim2.new(1, 0, 0, 16)
-    BarPctLbl.Position = UDim2.new(0, 0, 0, 22)
+    local BarPctLbl = lbl(StealBarOuter, "0", 13, T.textMid, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
+    BarPctLbl.Size     = UDim2.new(1, 0, 0, 18)
+    BarPctLbl.Position = UDim2.new(0, 0, 0, 30)
     BarPctLbl.ZIndex   = 22
     local BarSep = Instance.new("Frame", StealBarOuter)
-    BarSep.Size             = UDim2.new(1, -20, 0, 1)
-    BarSep.Position         = UDim2.new(0, 10, 0, 42)
+    BarSep.Size             = UDim2.new(1, -24, 0, 1)
+    BarSep.Position         = UDim2.new(0, 12, 0, 44)
     BarSep.BackgroundColor3 = Color3.fromRGB(24, 40, 60)
     BarSep.BorderSizePixel  = 0
     BarSep.ZIndex           = 21
@@ -486,15 +486,15 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         box.TextScaled       = false
         box.TextXAlignment   = Enum.TextXAlignment.Center
         box.ZIndex           = 22
-        corner(box, 4)
+        corner(box, 5)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
             if n then Config[configKey] = n; SaveConfig() end
             box.Text = tostring(Config[configKey])
         end)
     end
-    makeBarInput("Spd",   10,  "GrabSpeed")
-    makeBarInput("Range", 170, "GrabRange")
+    makeBarInput("Spd",   12,  "GrabSpeed")
+    makeBarInput("Range", 192, "GrabRange")
     local function doAutoTP(side)
         if AutoTPRunning then return end
         local data = TP_SIDES[side]
@@ -589,8 +589,9 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 local gY = getGroundHeight(r.Position)
                 if r.Position.Y - gY <= 3 then break end
                 if tick() - descentStart > 2 then break end
+                local dropSpd = isAirborne and -800 or -200
                 r.AssemblyLinearVelocity = Vector3.new(
-                    r.AssemblyLinearVelocity.X, -300, r.AssemblyLinearVelocity.Z)
+                    r.AssemblyLinearVelocity.X, dropSpd, r.AssemblyLinearVelocity.Z)
                 task.wait(0.03)
             end
             if aborted() then return end
@@ -836,26 +837,35 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 end
             end
             if target then
-                Interacting = true
-                buildCallbacks(target)
-                local dur = target.HoldDuration * Config.GrabSpeed
-                PillFill.Size  = UDim2.new(0, 0, 1, 0)
-                BarPctLbl.Text = "0"
-                TweenService:Create(PillFill, TweenInfo.new(dur, Enum.EasingStyle.Linear), { Size = UDim2.new(1, 0, 1, 0) }):Play()
-                task.spawn(function()
-                    local elapsed = 0
-                    while elapsed < dur and Interacting do
-                        elapsed = elapsed + task.wait(0.05)
-                        local pct = math.clamp(math.floor((elapsed / dur) * 100), 1, 100)
-                        BarPctLbl.Text = tostring(pct)
-                    end
-                end)
-                if InternalCache[target] then executeSteal(target, dur)
-                else task.wait(dur); fireproximityprompt(target) end
-                task.wait(0.1)
-                PillFill.Size  = UDim2.new(0, 0, 1, 0)
-                BarPctLbl.Text = "0"
-                Interacting = false
+                if not target.Parent then
+                    task.wait(0.15)
+                else
+                    Interacting = true
+                    local ok, err = pcall(function()
+                        buildCallbacks(target)
+                        local rawDur = (target.HoldDuration and target.HoldDuration > 0) and target.HoldDuration or 1
+                local dur = rawDur * Config.GrabSpeed
+                        PillFill.Size  = UDim2.new(0, 0, 1, 0)
+                        BarPctLbl.Text = "0"
+                        TweenService:Create(PillFill, TweenInfo.new(dur, Enum.EasingStyle.Linear), { Size = UDim2.new(1, 0, 1, 0) }):Play()
+                        task.spawn(function()
+                            local elapsed = 0
+                            while elapsed < dur and Interacting do
+                                elapsed = elapsed + task.wait(0.05)
+                                local pct = math.clamp(math.floor((elapsed / dur) * 100), 1, 100)
+                                BarPctLbl.Text = tostring(pct)
+                            end
+                        end)
+                        if InternalCache[target] then executeSteal(target, dur)
+                        else fireproximityprompt(target) end
+                    end)
+                    task.wait(0.05)
+                    PillFill.Size  = UDim2.new(0, 0, 1, 0)
+                    BarPctLbl.Text = "0"
+                    Interacting = false
+                    AutoPlayRunning = false
+                    if not ok then task.wait(0.1) end
+                end
             end
         end
     end)
@@ -917,7 +927,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                     FastSpeedEnabled = false; Config.FastSpeedState = false
                     if FastSpeedSetState then FastSpeedSetState(false) end
                 end
-                walkToPosition(root, steps[2], Config.FastSpeed, true)
+                walkToPosition(root, steps[2], Config.FastSpeed, 0.5)
                 task.wait(Config.Step2Delay)
                 if not AutoPlayEnabled then AutoPlayRunning = false; continue end
             else
@@ -1025,6 +1035,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 FloatDescendingStarted = true
             end
         end
+        
         if AutoPlayEnabled then
             local targetLook = Vector3.new(-0.9999873042106628, 0, 0.005038774572312832).Unit
             local currentLook = Vector3.new(root.CFrame.LookVector.X, 0, root.CFrame.LookVector.Z)
@@ -1517,7 +1528,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     SetInputRow("Float Height", "Float2Height", 9)
     do
         Config.BatDist        = 0
-        Config.Step2Delay     = 0.05
+        Config.Step2Delay     = 0.06
         Config.FloatHeight    = 18
         Config.FloatSpeed     = 85
         Config.Float2Speed    = 45
