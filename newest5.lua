@@ -50,8 +50,9 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         StopOnRight         = true,
         AutoPlayState       = false,
         AutoPlayKey         = Enum.KeyCode.H,
+        AutoKey             = Enum.KeyCode.N,
         AutoPlaySide        = "L",
-        Step2Delay          = 0.06,
+        Step2Delay          = 0.05,
     }
     local KEYBIND_DEFAULTS = {
         FastSpeedKey = Enum.KeyCode.T,
@@ -60,6 +61,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         Float2Key    = Enum.KeyCode.J,
         AutoTPKey    = Enum.KeyCode.G,
         AutoPlayKey  = Enum.KeyCode.H,
+        AutoKey      = Enum.KeyCode.N,
     }
     local ConfigFile = "adv1se_final_config.json"
     local function SaveConfig()
@@ -83,7 +85,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end
         end
         Config.BatDist        = 0
-        Config.Step2Delay     = 0.06
+        Config.Step2Delay     = 0.05
         Config.FloatHeight    = 18
         Config.FloatSpeed     = 85
         Config.Float2Speed    = 45
@@ -131,17 +133,32 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         L = { Step1 = Vector3.new(-470.56, -7.30, 100.08), Step2 = Vector3.new(-482.86, -5.09, 95.34) },
     }
     local AutoTPRunning = false
-    local AutoPlayStepsL = {
+    local AutoLREnabled    = false
+    local AutoLRRunning    = false
+    local AutoLRRestarting = false
+    local AutoLRStartStep  = 1
+    local autoLRSetState   = nil
+    local AutoLRStepsL = {
         Vector3.new(-475.80, -7.20, 94.04),
         Vector3.new(-482.86, -5.09, 95.34),
         Vector3.new(-476.36, -6.69, 93.02),
+    }
+    local AutoLRStepsR = {
+        Vector3.new(-476.19, -6.99, 26.26),
+        Vector3.new(-483.09, -5.09, 26.45),
+        Vector3.new(-476.18, -6.76, 29.46),
+    }
+    local AutoPlayStepsL = {
+        Vector3.new(-475.60, -7.20, 93.74),
+        Vector3.new(-483.06, -5.09, 94.94),
+        Vector3.new(-476.46, -6.69, 93.02),
         Vector3.new(-476.44, -6.75, 27.55),
         Vector3.new(-485.52, -5.05, 27.29),
     }
     local AutoPlayStepsR = {
-        Vector3.new(-476.19, -6.99, 26.26),
-        Vector3.new(-483.09, -5.09, 26.45),
-        Vector3.new(-476.18, -6.76, 29.46),
+        Vector3.new(-476.89, -6.99, 26.26),
+        Vector3.new(-482.89, -5.09, 26.45),
+        Vector3.new(-476.48, -6.76, 28.86),
         Vector3.new(-476.68, -6.59, 94.13),
         Vector3.new(-484.26, -5.35, 94.00),
     }
@@ -243,6 +260,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             else                TitlePills.setR(true); TitlePills.setL(false) end
         end
         if AutoPlayEnabled then AutoPlayRunning = false end
+        if AutoLREnabled   then AutoLRRunning   = false end
         SaveConfig()
     end
     local ScreenGui = Instance.new("ScreenGui")
@@ -440,8 +458,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         end
     end)
     local StealBarOuter = Instance.new("Frame", ScreenGui)
-    StealBarOuter.Size                   = UDim2.new(0, 300, 0, 68)
-    StealBarOuter.Position               = UDim2.new(0.5, -150, 1, -156)
+    StealBarOuter.Size                   = UDim2.new(0, 320, 0, 76)
+    StealBarOuter.Position               = UDim2.new(0.5, -160, 1, -168)
     StealBarOuter.BackgroundColor3       = Color3.fromRGB(8, 12, 20)
     StealBarOuter.BackgroundTransparency = 0
     StealBarOuter.BorderSizePixel        = 0
@@ -449,8 +467,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     StealBarOuter.Visible                = true
     corner(StealBarOuter, 14)
     local PillTrack = Instance.new("Frame", StealBarOuter)
-    PillTrack.Size             = UDim2.new(1, -24, 0, 18)
-    PillTrack.Position         = UDim2.new(0, 12, 0, 10)
+    PillTrack.Size             = UDim2.new(1, -20, 0, 10)
+    PillTrack.Position         = UDim2.new(0, 10, 0, 10)
     PillTrack.BackgroundColor3 = Color3.fromRGB(20, 36, 54)
     PillTrack.BorderSizePixel  = 0
     PillTrack.ZIndex           = 21
@@ -461,13 +479,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     PillFill.BorderSizePixel  = 0
     PillFill.ZIndex           = 22
     corner(PillFill, 99)
-    local BarPctLbl = lbl(StealBarOuter, "0", 13, T.textMid, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
-    BarPctLbl.Size     = UDim2.new(1, 0, 0, 18)
-    BarPctLbl.Position = UDim2.new(0, 0, 0, 30)
+    local BarPctLbl = lbl(StealBarOuter, "0", 12, T.textMid, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
+    BarPctLbl.Size     = UDim2.new(1, 0, 0, 16)
+    BarPctLbl.Position = UDim2.new(0, 0, 0, 22)
     BarPctLbl.ZIndex   = 22
     local BarSep = Instance.new("Frame", StealBarOuter)
-    BarSep.Size             = UDim2.new(1, -24, 0, 1)
-    BarSep.Position         = UDim2.new(0, 12, 0, 44)
+    BarSep.Size             = UDim2.new(1, -20, 0, 1)
+    BarSep.Position         = UDim2.new(0, 10, 0, 44)
     BarSep.BackgroundColor3 = Color3.fromRGB(24, 40, 60)
     BarSep.BorderSizePixel  = 0
     BarSep.ZIndex           = 21
@@ -486,15 +504,15 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         box.TextScaled       = false
         box.TextXAlignment   = Enum.TextXAlignment.Center
         box.ZIndex           = 22
-        corner(box, 5)
+        corner(box, 4)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
             if n then Config[configKey] = n; SaveConfig() end
             box.Text = tostring(Config[configKey])
         end)
     end
-    makeBarInput("Spd",   12,  "GrabSpeed")
-    makeBarInput("Range", 192, "GrabRange")
+    makeBarInput("Spd",   10,  "GrabSpeed")
+    makeBarInput("Range", 170, "GrabRange")
     local function doAutoTP(side)
         if AutoTPRunning then return end
         local data = TP_SIDES[side]
@@ -589,7 +607,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 local gY = getGroundHeight(r.Position)
                 if r.Position.Y - gY <= 3 then break end
                 if tick() - descentStart > 2 then break end
-                local dropSpd = isAirborne and -300 or -150
+                local dropSpd = isAirborne and -800 or -300
                 r.AssemblyLinearVelocity = Vector3.new(
                     r.AssemblyLinearVelocity.X, dropSpd, r.AssemblyLinearVelocity.Z)
                 task.wait(0.03)
@@ -664,6 +682,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                     ragdollOccurred = true
                     AutoPlayEnabled = false; AutoPlayRunning = false; Config.AutoPlayState = false
                     if autoPlaySetState then autoPlaySetState(false) end
+                    AutoLREnabled = false; AutoLRRunning = false
+                    if autoLRSetState then autoLRSetState(false) end
                     hum:ChangeState(Enum.HumanoidStateType.Running)
                     workspace.CurrentCamera.CameraSubject = hum
                     pcall(function()
@@ -838,13 +858,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end
             if target then
                 if not target.Parent then
-                    task.wait(0.15)
+                    task.wait(0.05)
                 else
                     Interacting = true
                     local ok, err = pcall(function()
                         buildCallbacks(target)
                         local rawDur = (target.HoldDuration and target.HoldDuration > 0) and target.HoldDuration or 1
-                local dur = rawDur * Config.GrabSpeed
+                        local dur = rawDur * Config.GrabSpeed
                         PillFill.Size  = UDim2.new(0, 0, 1, 0)
                         BarPctLbl.Text = "0"
                         TweenService:Create(PillFill, TweenInfo.new(dur, Enum.EasingStyle.Linear), { Size = UDim2.new(1, 0, 1, 0) }):Play()
@@ -864,6 +884,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                     BarPctLbl.Text = "0"
                     Interacting = false
                     AutoPlayRunning = false
+                    AutoLRRunning   = false
                     if not ok then task.wait(0.1) end
                 end
             end
@@ -895,7 +916,23 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         AutoPlayEnabled = false; AutoPlayRunning = false; Config.AutoPlayState = false
         if not AutoPlayRestarting and autoPlaySetState then autoPlaySetState(false) end
     end
+    local function stopAutoLR()
+        AutoLREnabled = false; AutoLRRunning = false
+        if not AutoLRRestarting and autoLRSetState then autoLRSetState(false) end
+    end
     local function walkToPosition(root, targetPos, speed, arriveDistance)
+        speed = speed or Config.CarrySpeed
+        if type(arriveDistance) ~= "number" then arriveDistance = 1 end
+        while AutoPlayEnabled or AutoLREnabled do
+            local flat = Vector3.new(targetPos.X - root.Position.X, 0, targetPos.Z - root.Position.Z)
+            if flat.Magnitude <= arriveDistance then break end
+            local dir = flat.Unit
+            root.AssemblyLinearVelocity = Vector3.new(dir.X * speed, root.AssemblyLinearVelocity.Y, dir.Z * speed)
+            RunService.Heartbeat:Wait()
+        end
+        root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+    end
+    local function walkToPositionAP(root, targetPos, speed, arriveDistance)
         speed = speed or Config.CarrySpeed
         if type(arriveDistance) ~= "number" then arriveDistance = 1 end
         while AutoPlayEnabled do
@@ -907,6 +944,57 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         end
         root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
     end
+    local function walkToPositionLR(root, targetPos, speed, arriveDistance)
+        speed = speed or Config.CarrySpeed
+        if type(arriveDistance) ~= "number" then arriveDistance = 1 end
+        while AutoLREnabled do
+            local flat = Vector3.new(targetPos.X - root.Position.X, 0, targetPos.Z - root.Position.Z)
+            if flat.Magnitude <= arriveDistance then break end
+            local dir = flat.Unit
+            root.AssemblyLinearVelocity = Vector3.new(dir.X * speed, root.AssemblyLinearVelocity.Y, dir.Z * speed)
+            RunService.Heartbeat:Wait()
+        end
+        if AutoLREnabled then
+            root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+        end
+    end
+    -- Auto loop
+    task.spawn(function()
+        while true do
+            task.wait(0.05)
+            if not AutoLREnabled or AutoLRRunning then continue end
+            AutoLRRunning = true
+            local char = Player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            if not root then stopAutoLR(); continue end
+            local steps = sharedSide == "R" and AutoLRStepsR or AutoLRStepsL
+            local startStep = AutoLRStartStep; AutoLRStartStep = 1
+            if startStep == 1 then
+                walkToPositionLR(root, steps[1], Config.FastSpeed)
+                if not AutoLREnabled then AutoLRRunning = false; continue end
+                if FastSpeedEnabled then
+                    FastSpeedEnabled = false; Config.FastSpeedState = false
+                    if FastSpeedSetState then FastSpeedSetState(false) end
+                end
+                walkToPositionLR(root, steps[2], Config.FastSpeed, 0.5)
+                task.wait(Config.Step2Delay)
+                if not AutoLREnabled then AutoLRRunning = false; continue end
+            else
+                root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+                task.wait(0.1)
+                if not AutoLREnabled then AutoLRRunning = false; continue end
+            end
+            root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if root then walkToPositionLR(root, steps[3], Config.CarrySpeed, 1) end
+            -- done — stop and turn off
+            root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if root then root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0) end
+            AutoLREnabled = false
+            AutoLRRunning = false
+            if autoLRSetState then autoLRSetState(false) end
+        end
+    end)
+    -- Auto Play loop
     task.spawn(function()
         while true do
             task.wait(0.05)
@@ -920,14 +1008,14 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             local startStep = AutoPlayStartStep; AutoPlayStartStep = 1
             if startStep == 1 then
                 if not (zone and isInZone(root.Position, zone)) then
-                    walkToPosition(root, steps[1], Config.FastSpeed)
+                    walkToPositionAP(root, steps[1], Config.FastSpeed)
                     if not AutoPlayEnabled then AutoPlayRunning = false; continue end
                 end
                 if FastSpeedEnabled then
                     FastSpeedEnabled = false; Config.FastSpeedState = false
                     if FastSpeedSetState then FastSpeedSetState(false) end
                 end
-                walkToPosition(root, steps[2], Config.FastSpeed, 0.5)
+                walkToPositionAP(root, steps[2], Config.FastSpeed, 0.5)
                 task.wait(Config.Step2Delay)
                 if not AutoPlayEnabled then AutoPlayRunning = false; continue end
             else
@@ -936,13 +1024,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 if not AutoPlayEnabled then AutoPlayRunning = false; continue end
             end
             root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if root then walkToPosition(root, steps[3], Config.CarrySpeed, false) end
+            if root then walkToPositionAP(root, steps[3], Config.CarrySpeed, false) end
             if not AutoPlayEnabled then AutoPlayRunning = false; continue end
             root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if root then walkToPosition(root, steps[4], Config.CarrySpeed, false) end
+            if root then walkToPositionAP(root, steps[4], Config.CarrySpeed, false) end
             if not AutoPlayEnabled then AutoPlayRunning = false; continue end
             root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if root then walkToPosition(root, steps[5], Config.CarrySpeed, true) end
+            if root then walkToPositionAP(root, steps[5], Config.CarrySpeed, true) end
             stopAutoPlay()
         end
     end)
@@ -964,7 +1052,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum  = char and char:FindFirstChildOfClass("Humanoid")
         if not root or not hum then return end
-        if not AutoPlayEnabled and not AutoBatEnabled and hum.MoveDirection.Magnitude > 0 then
+        if not AutoPlayEnabled and not AutoLREnabled and not AutoBatEnabled and hum.MoveDirection.Magnitude > 0 then
             local spd = FastSpeedEnabled and Config.FastSpeed or Config.CarrySpeed
             root.AssemblyLinearVelocity = Vector3.new(
                 hum.MoveDirection.X * spd,
@@ -1035,8 +1123,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 FloatDescendingStarted = true
             end
         end
-        
-        if AutoPlayEnabled then
+        if AutoPlayEnabled or AutoLREnabled then
             local targetLook = Vector3.new(-0.9999873042106628, 0, 0.005038774572312832).Unit
             local currentLook = Vector3.new(root.CFrame.LookVector.X, 0, root.CFrame.LookVector.Z)
             if currentLook.Magnitude > 0.01 then
@@ -1411,6 +1498,42 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end
         end
     end)
+    -- Auto L/R toggle
+    local _, _alrSetState, _alrSetSide = FeatToggleWithSide("Auto", 7,
+        sharedSide,
+        function(s, side)
+            AutoLREnabled = s
+            if not s then
+                AutoLRRunning = false
+            else
+                if ragdollOccurred and not ragdollTPCooldown and (tick() - lastRagdollTick < 3) then
+                    ragdollOccurred = false
+                    ragdollTPCooldown = true
+                    local side2 = sharedSide or "L"
+                    local data = TP_SIDES[side2]
+                    task.spawn(function()
+                        AutoLREnabled = false; AutoLRRunning = false
+                        if autoLRSetState then autoLRSetState(false) end
+                        task.wait(0.08)
+                        local r = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                        if r then r.CFrame = CFrame.new(data.Step1) end
+                        task.wait(0.2)
+                        r = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                        local ragStep2 = side2 == "R" and Vector3.new(-483.09, -5.09, 26.45) or Vector3.new(-482.86, -5.09, 95.34)
+                        if r then r.CFrame = CFrame.new(ragStep2 + Vector3.new(0, 3, 0)) end
+                        task.wait(0.15)
+                        AutoLRStartStep = 3
+                        AutoLREnabled = true; AutoLRRunning = false
+                        if autoLRSetState then autoLRSetState(true) end
+                        task.wait(2.5); ragdollTPCooldown = false
+                    end)
+                end
+            end
+        end,
+        function(side) switchSide(side) end
+    )
+    table.insert(_sideRowRefs, { setSide = _alrSetSide })
+    autoLRSetState = _alrSetState
     local _, _apSetState, _apSetSide = FeatToggleWithSide("Auto Play", 8,
         sharedSide,
         function(s, side)
@@ -1523,12 +1646,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     SetKeybindRow("Auto Bat",  "AutoBatKey",  4)
     SetKeybindRow("Auto TP",   "AutoTPKey",   5)
     SetKeybindRow("Auto Play", "AutoPlayKey", 6)
+    SetKeybindRow("Auto",      "AutoKey",     7)
     SetSectionHeader("VALUES", 7)
     SetInputRow("Speed",        "FastSpeed",    8)
     SetInputRow("Float Height", "Float2Height", 9)
     do
         Config.BatDist        = 0
-        Config.Step2Delay     = 0.06
+        Config.Step2Delay     = 0.05
         Config.FloatHeight    = 18
         Config.FloatSpeed     = 85
         Config.Float2Speed    = 45
@@ -1577,6 +1701,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             end)
         end
         if _apSetSide then _apSetSide(Config.AutoPlaySide or "L") end
+        if _alrSetSide then _alrSetSide(Config.AutoPlaySide or "L") end
     end
     UIS.InputBegan:Connect(function(i, p)
         if p then return end
@@ -1666,5 +1791,9 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 end
             end
             if autoPlaySetState then autoPlaySetState(AutoPlayEnabled) end
+        elseif i.KeyCode == Config.AutoKey then
+            AutoLREnabled = not AutoLREnabled
+            AutoLRRunning = false
+            if autoLRSetState then autoLRSetState(AutoLREnabled) end
         end
     end)
