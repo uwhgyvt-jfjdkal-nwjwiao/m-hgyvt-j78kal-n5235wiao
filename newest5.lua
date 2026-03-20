@@ -1,9 +1,16 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
     pcall(function()
         for _, v in pairs(workspace:GetDescendants()) do
-            if v.Name == "Slope" and v:IsA("BasePart") then
-                v.CanCollide = false
+            if v:IsA("BasePart") then
+                if v.Name == "Slope" or v.Name == "Cube.002" then
+                    v.CanCollide = false
+                end
             end
+        end
+    end)
+    workspace.DescendantAdded:Connect(function(v)
+        if v:IsA("BasePart") and (v.Name == "Slope" or v.Name == "Cube.002") then
+            v.CanCollide = false
         end
     end)
     local Players      = game:GetService("Players")
@@ -149,16 +156,16 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         Vector3.new(-476.18, -6.76, 29.46),
     }
     local AutoPlayStepsL = {
-        Vector3.new(-475.60, -7.20, 93.74),
-        Vector3.new(-483.06, -5.09, 94.94),
-        Vector3.new(-476.46, -6.69, 93.02),
+        Vector3.new(-476.50, -6.90, 94.54),
+        Vector3.new(-482.86, -5.09, 95.34),
+        Vector3.new(-476.56, -6.69, 93.02),
         Vector3.new(-476.44, -6.75, 27.55),
         Vector3.new(-485.52, -5.05, 27.29),
     }
     local AutoPlayStepsR = {
-        Vector3.new(-476.89, -6.99, 26.26),
-        Vector3.new(-482.89, -5.09, 26.45),
-        Vector3.new(-476.48, -6.76, 28.86),
+        Vector3.new(-476.69, -6.99, 27.06),
+        Vector3.new(-483.09, -5.09, 26.45),
+        Vector3.new(-476.28, -6.76, 28.76),
         Vector3.new(-476.68, -6.59, 94.13),
         Vector3.new(-484.26, -5.35, 94.00),
     }
