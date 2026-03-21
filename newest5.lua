@@ -1467,7 +1467,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     SetKeybindRow("Drop Key","FloatKey",5)
     SetKeybindRow("Float Key","Float2Key",6)
     SetKeybindRow("Auto Bat","AutoBatKey",7)
-    SetKeybindRow("Auto TP","AutoTPKey",8)
+    SetKeybindRow("Manual TP","AutoTPKey",8)
     SetKeybindRow("Auto Play","AutoPlayKey",9)
     SetKeybindRow("Auto","AutoKey",10)
     SetSectionHeader("VALUES",11)
