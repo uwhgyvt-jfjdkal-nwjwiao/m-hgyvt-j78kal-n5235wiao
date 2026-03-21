@@ -522,14 +522,23 @@ if not game:IsLoaded() then game.Loaded:Wait() end
                 r=getRoot(); if r then r.AssemblyLinearVelocity=Vector3.new(r.AssemblyLinearVelocity.X,0,r.AssemblyLinearVelocity.Z) end
                 task.wait(0.05)
             end
-            local ds=tick()
-            while not aborted() do
-                r=getRoot(); if not r then break end
-                local gY=getGroundHeight(r.Position)
-                if r.Position.Y-gY<=3 then break end; if tick()-ds>2 then break end
-                local dropSpd=isAirborne and -200 or -120
-                r.AssemblyLinearVelocity=Vector3.new(r.AssemblyLinearVelocity.X,dropSpd,r.AssemblyLinearVelocity.Z)
-                task.wait(0.03)
+            if isAirborne then
+                r=getRoot()
+                if r then
+                    local gY=getGroundHeight(r.Position)
+                    r.CFrame=CFrame.new(Vector3.new(r.Position.X, gY+3, r.Position.Z))
+                    r.AssemblyLinearVelocity=Vector3.new(r.AssemblyLinearVelocity.X,0,r.AssemblyLinearVelocity.Z)
+                end
+            else
+                local ds=tick()
+                while not aborted() do
+                    r=getRoot(); if not r then break end
+                    local gY=getGroundHeight(r.Position)
+                    if r.Position.Y-gY<=3 then break end
+                    if tick()-ds>2 then break end
+                    r.AssemblyLinearVelocity=Vector3.new(r.AssemblyLinearVelocity.X,-120,r.AssemblyLinearVelocity.Z)
+                    task.wait(0.03)
+                end
             end
             if aborted() then return end
             BrainrotSequenceRunning=false; FloatEnabled=false; Config.FloatState=false; FloatTargetY=nil; FloatActiveSpeed=nil
