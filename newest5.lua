@@ -1,12 +1,5 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
-    pcall(function()
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("BasePart") and v.Name == "Slope" then v.CanCollide = false end
-        end
-    end)
-    workspace.DescendantAdded:Connect(function(v)
-        if v:IsA("BasePart") and v.Name == "Slope" then v.CanCollide = false end
-    end)
+    
     local Players      = game:GetService("Players")
     local RunService   = game:GetService("RunService")
     local UIS          = game:GetService("UserInputService")
@@ -168,8 +161,8 @@ if not game:IsLoaded() then game.Loaded:Wait() end
     local PromptCache  = {}
     local IsRebinding  = false
     local TP_SIDES = {
-        R = { Step1 = Vector3.new(-473.42,-7.30,22.15),  Step2 = Vector3.new(-482.89,-5.09,26.45) },
-        L = { Step1 = Vector3.new(-470.56,-7.30,100.08), Step2 = Vector3.new(-482.86,-5.09,95.34) },
+        R = { Step1 = Vector3.new(-474.95,-7.29,25.85) },
+        L = { Step1 = Vector3.new(-474.92,-7.29,95.13) },
     }
     local AutoTPRunning    = false
     local AutoLREnabled    = false
@@ -475,15 +468,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         task.spawn(function()
             local root=Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
             if root then root.CFrame=CFrame.new(data.Step1) end
-            task.wait(0.2)
-            root=Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if root then root.CFrame=CFrame.new(data.Step2+Vector3.new(0,6,0)) end
-            AutoTPRunning=false; task.wait(0.05)
-            root=Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if root and AutoPlayEnabled then
-                local zone=Config.StopOnLeft and ZoneDefs.Left or Config.StopOnRight and ZoneDefs.Right
-                if zone and isInZone(root.Position,zone) then AutoPlayRunning=false end
-            end
+            AutoTPRunning=false
         end)
     end
 
