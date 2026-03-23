@@ -1441,7 +1441,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
             if root and hum and hum.Health > 0 then
                 local groundY = getGroundHeight(root.Position)
                 local isGrounded = (root.Position.Y - groundY) < 4
-                local jumpPower = isGrounded and math.random(50, 60) or math.random(42, 48)
+                local jumpPower = isGrounded and math.random(50, 60) or math.random(45, 55)
                 root.AssemblyLinearVelocity = Vector3.new(
                     root.AssemblyLinearVelocity.X, jumpPower, root.AssemblyLinearVelocity.Z)
             end
