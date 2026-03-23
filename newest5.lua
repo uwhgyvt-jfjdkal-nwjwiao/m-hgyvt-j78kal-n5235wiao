@@ -1435,18 +1435,16 @@ if not game:IsLoaded() then game.Loaded:Wait() end
         if p then return end
         if IsRebinding then return end
         if i.KeyCode == Enum.KeyCode.Space and Config.InfJumpEnabled then
-            task.spawn(function()
-                while UIS:IsKeyDown(Enum.KeyCode.Space) and Config.InfJumpEnabled do
-                    local char = Player.Character
-                    local root = char and char:FindFirstChild("HumanoidRootPart")
-                    local hum  = char and char:FindFirstChildOfClass("Humanoid")
-                    if root and hum and hum.Health > 0 then
-                        root.AssemblyLinearVelocity = Vector3.new(
-                            root.AssemblyLinearVelocity.X, math.random(42, 48), root.AssemblyLinearVelocity.Z)
-                    end
-                    task.wait(0.05)
-                end
-            end)
+            local char = Player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            local hum  = char and char:FindFirstChildOfClass("Humanoid")
+            if root and hum and hum.Health > 0 then
+                local groundY = getGroundHeight(root.Position)
+                local isGrounded = (root.Position.Y - groundY) < 4
+                local jumpPower = isGrounded and math.random(50, 60) or math.random(42, 48)
+                root.AssemblyLinearVelocity = Vector3.new(
+                    root.AssemblyLinearVelocity.X, jumpPower, root.AssemblyLinearVelocity.Z)
+            end
         end
         if i.KeyCode == Config.FastSpeedKey then
             if FastSpeedSetState then FastSpeedSetState(not FastSpeedEnabled) end
